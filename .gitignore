@@ -26,3 +26,4 @@ dist-ssr
 /src/components.d.ts
 /src/auto-imports.d.ts
 /.eslintignore
+/.vscode
