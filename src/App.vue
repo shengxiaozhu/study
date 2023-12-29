@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import EpTable from '@/components/EpTable/index.vue';
-import { tableData, headerList, operateList } from '@/components/EpTable/tableData';
+import EpTable from '@/plugins/components/EpTable/index.vue';
+import { tableData, headerList, operateList } from '@/plugins/components/EpTable/tableData';
 </script>
 
 <template>

@@ -1,4 +1,4 @@
-import { headerListItem, operateListItem } from './props';
+import { HeaderListItem, OperateListItem } from './props';
 
 export const tableData: any = [
   {
@@ -2530,7 +2530,7 @@ export const tableData: any = [
 //   },
 // ];
 
-export const headerList: headerListItem[] = [
+export const headerList: HeaderListItem[] = [
   { label: '流程id', id: 1, prop: 'id', slot: true },
   { label: '产品信息', id: 2, prop: 'product_name', width: 350, slot: true },
   { label: '采购链接', id: 3, prop: 'url', width: 170, slot: true },
@@ -2632,7 +2632,7 @@ export const headerList: headerListItem[] = [
   },
 ];
 
-export const operateList: operateListItem[] = [
+export const operateList: OperateListItem[] = [
   {
     id: 1,
     label: '领取',

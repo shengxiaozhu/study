@@ -15,7 +15,7 @@ export default defineConfig(({ command }) => {
   return {
     build:{
       lib:{
-        entry: path.resolve(__dirname, "src/main.ts"),
+        entry: path.resolve(__dirname, "src/plugins/index.ts"),
         name: "EStudy",
         fileName: (format) => `e-study.${format}.js`,
       },

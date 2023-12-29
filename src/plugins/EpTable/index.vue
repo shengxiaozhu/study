@@ -127,7 +127,7 @@
 
 <script setup lang="ts">
 import type { TableInstance, TableColumnCtx, Sort } from 'element-plus';
-import { headerListItem, operateListItem, rowStyleItem } from './props';
+import { HeaderListItem, OperateListItem, RowStyleItem } from './props';
 import tableHeader from './tableHeader.vue';
 import tableOperate from './tableOperate.vue';
 
@@ -139,16 +139,16 @@ const props = withDefaults(
   defineProps<{
     page?: string; // 当前页唯一标识
     tableData: Record<string, any>[]; // 表格数据
-    headerList: headerListItem[]; // 表头数据
+    headerList: HeaderListItem[]; // 表头数据
     customHeader?: boolean; // 是否自定义列
     selection?: boolean; // 是否显示多选框
     scrollTop?: boolean; // 刷新数据是否回滚到顶部
     customOperate?: boolean; // 是否自定义操作项
     operateFixed?: boolean; // 操作项是否固定右侧展示
     operateWidth?: number | string; // 操作项宽度
-    operateList?: operateListItem[]; // 操作项数据
+    operateList?: OperateListItem[]; // 操作项数据
     headerCellStyle?: Record<string, any>; // 表头样式
-    rowStyleList?: rowStyleItem[]; // 特殊表格样式 && 多条样式，根据判断成功最后一条展示
+    rowStyleList?: RowStyleItem[]; // 特殊表格样式 && 多条样式，根据判断成功最后一条展示
     offsetBottom?: number; // 距离底部距离
   }>(),
   {
@@ -174,18 +174,18 @@ const props = withDefaults(
 const emits = defineEmits<{
   (e: 'selectionChange', value: anyObj[]): void;
   (e: 'sortChange', value: Sort): void;
-  (e: 'tableOperate', btn: operateListItem, row: anyObj): void;
+  (e: 'tableOperate', btn: OperateListItem, row: anyObj): void;
 }>();
 
-const columnList = ref<headerListItem[]>();
+const columnList = ref<HeaderListItem[]>();
 // 计算展示表头
 const getColumnList = () => {
   const { headerList, page } = props;
   const current = `EpTableHeaderList${page}`;
   const storeList = JSON.parse(localStorage.getItem(current) || '[]');
-  let colunm: headerListItem[] = [];
+  let colunm: HeaderListItem[] = [];
   if (storeList.length > 0) {
-    storeList.forEach((v: headerListItem) => {
+    storeList.forEach((v: HeaderListItem) => {
       const item = headerList.find((h) => h.prop === v.prop);
       if (item && v.checked) {
         colunm.push({ ...v, ...item, width: v.width || item.width });
@@ -214,11 +214,11 @@ const handleSelectionChange = (value: anyObj[]) => {
 };
 
 // 设置某一条件下整行样式
-const rowStyle = ({ row }: {row: any; rowIndex: number}) => {
+const rowStyle = ({ row }: { row: any; rowIndex: number }) => {
   const { rowStyleList } = props;
   let css = {};
   if (rowStyleList.length) {
-    rowStyleList.forEach((v: rowStyleItem) => {
+    rowStyleList.forEach((v: RowStyleItem) => {
       const { prop, value, style } = v;
       const type = typeof row[prop];
       if (type === 'boolean' || (type === 'number' && row[prop] === value)) {
@@ -232,14 +232,14 @@ const rowStyle = ({ row }: {row: any; rowIndex: number}) => {
 };
 
 const operateDrawer = ref(false);
-const btnList = ref<operateListItem[]>([]);
+const btnList = ref<OperateListItem[]>([]);
 const getOperate = () => {
   const { operateList, page } = props;
   const current = `EpTableOperateList${page}`;
   const storeList = JSON.parse(localStorage.getItem(current) || '[]');
-  let list: operateListItem[] = [];
+  let list: OperateListItem[] = [];
   if (storeList.length > 0) {
-    storeList.forEach((v: operateListItem) => {
+    storeList.forEach((v: OperateListItem) => {
       const item = operateList.find((h) => h.event === v.event);
       if (item && v.checked) {
         v.label = item.label;
@@ -254,7 +254,7 @@ const getOperate = () => {
 };
 
 // 判断按钮展示
-const decisionBtn = (btn: operateListItem, row: anyObj) => {
+const decisionBtn = (btn: OperateListItem, row: anyObj) => {
   let result = true; // 默认展示按钮
   const { decision } = btn;
   const keys = Object.keys(row).map((k) => k);

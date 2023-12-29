@@ -1,58 +1,47 @@
 <script setup lang="ts">
-import { operateListItem } from './props';
+import { HeaderListItem } from './props';
 const props = withDefaults(
   defineProps<{
     page?: string; // 当前页唯一标识
-    operateList: operateListItem[]; // 操作项数据
+    headerList: HeaderListItem[]; // 表头数据
     drawer: boolean; // 抽屉是否打开
   }>(),
   {
     page: 'page',
-    operateList: () => [],
+    headerList: () => [],
     drawer: false,
   },
 );
+
 const emits = defineEmits<{
   (e: 'update:drawer', value: boolean): void;
 }>();
 
-const currentPage = computed(() => `EpTableOperateList${props.page}`);
-
-const copyValue = (text: string) => {
-  const textarea = document.createElement('textarea');
-  document.body.appendChild(textarea);
-  textarea.value = text;
-  textarea.select();
-  if (document.execCommand('Copy')) {
-    document.execCommand('Copy');
-    ElMessage.success('已复制到粘贴板！');
-  }
-  document.body.removeChild(textarea);
-};
+const currentPage = computed(() => `EpTableHeaderList${props.page}`);
 
 const titleStyle = computed(() => {
-  const h = props.operateList.length * 45;
+  const h = props.headerList.length * 45;
   const H = document.documentElement.clientHeight || document.body.clientHeight;
-  return h > H - 330 ? { paddingRight: '4px' } : { paddingRight: 0 };
+  return h > H - 280 ? { paddingRight: '4px' } : { paddingRight: 0 };
 });
 const groupStyle = computed(() => {
-  const h = props.operateList.length * 45;
+  const h = props.headerList.length * 45;
   const H = document.documentElement.clientHeight || document.body.clientHeight;
-  return h > H - 330 ? { borderBottom: '1px solid #f2f2f2' } : {};
+  return h > H - 280 ? { borderBottom: '1px solid #f2f2f2' } : {};
 });
 
-const btnList = ref<operateListItem[]>([]);
-const first = ref(false);
+const columnList = ref<HeaderListItem[]>([]);
+const fixed = ref(false);
 
 const allChecked = computed(() => {
-  const obj = btnList.value.filter((e: any) => {
+  const obj = columnList.value.filter((e) => {
     return !e.checked;
   });
   return !obj.length;
 });
 const changeCheckbox = () => {
   if (!allChecked.value) {
-    btnList.value.forEach((v: any) => {
+    columnList.value.forEach((v) => {
       v.checked = true;
     });
   }
@@ -60,98 +49,102 @@ const changeCheckbox = () => {
 
 const checkedNumber = computed(() => {
   let num = 0;
-  btnList.value.forEach((v: any) => {
+  columnList.value.forEach((v) => {
     if (v.checked) {
       num += 1;
     }
   });
   return num;
 });
-
-const getBtnList = () => {
-  const operate = JSON.parse(JSON.stringify(props.operateList));
+const getColumnList = () => {
+  const column = JSON.parse(JSON.stringify(props.headerList));
   const storeList = JSON.parse(localStorage.getItem(currentPage.value) || '[]');
-  const list: operateListItem[] = [];
-  storeList.forEach((v: operateListItem) => {
-    const index: number = operate.findIndex((h: operateListItem) => h.event === v.event);
+  const list: HeaderListItem[] = [];
+  storeList.forEach((v: HeaderListItem) => {
+    const index: number = column.findIndex((h: HeaderListItem) => h.prop === v.prop);
     if (index > -1) {
-      const item: operateListItem = operate.splice(index, 1)[0];
-      // 每次更新按钮名称
-      list.push({ ...item, ...v, label: item.label});
+      const item: HeaderListItem = column.splice(index, 1)[0];
+      // 每次更新表头名称
+      list.push({ ...item, ...v, label: item.label });
     }
   });
 
-  btnList.value = [...list, ...operate];
+  columnList.value = [...list, ...column];
   if (list.length === 0) {
-    btnList.value.forEach((v: any) => {
+    columnList.value.forEach((v: any) => {
       v.checked = true;
     });
   }
-};
 
-const start = ref(null);
-const end = ref(null);
+  fixed.value = columnList.value.some((v) => v.checked && v.fixed);
+};
+getColumnList();
+
+const start = ref<HeaderListItem>();
+const end = ref<HeaderListItem>();
 // 拖拽开始
-const dragstart = (item: any) => {
+const dragstart = (item: HeaderListItem) => {
   start.value = item;
 };
 // 拖拽过程
-const dragenter = (item: any, e: any) => {
+const dragenter = (item: HeaderListItem, e: DragEvent) => {
   end.value = item;
   e.preventDefault();
 };
 // 拖拽结束
-const dragend = (item: any, e: any) => {
+const dragend = (item: HeaderListItem, e: DragEvent) => {
   if (start.value === end.value) return;
-  const oldIndex = btnList.value.indexOf(start.value);
-  const newIndex = btnList.value.indexOf(end.value);
-  const newItems = [...btnList.value];
-  // 删除老节点
-  newItems.splice(oldIndex, 1);
+  if (start.value && end.value) {
+    const oldIndex: number = columnList.value.findIndex((v) => v.prop === start.value?.prop);
+    const newIndex: number = columnList.value.findIndex((v) => v.prop === end.value?.prop);
+    const newItems = [...columnList.value];
+    // 删除老节点
+    newItems.splice(oldIndex, 1);
 
-  // 目标位置新增节点
-  newItems.splice(newIndex, 0, start.value);
-  btnList.value = [...newItems];
+    // 目标位置新增节点
+    newItems.splice(newIndex, 0, start.value);
+    columnList.value = [...newItems];
+  }
 };
 // 拖拽事件
-const dragover = (e: any) => {
+const dragover = (e: DragEvent) => {
   e.preventDefault();
 };
 
 // 保存设置
 const submit = () => {
-  const index = btnList.value.findIndex((item: any) => item.checked);
-  btnList.value.forEach((e: any) => {
-    delete e.first;
+  const index = columnList.value.findIndex((item) => item.checked);
+  columnList.value.forEach((e) => {
+    delete e.fixed;
   });
-  btnList.value[index].first = first.value;
-  localStorage.setItem(currentPage.value, JSON.stringify(btnList.value));
+  columnList.value[index].fixed = fixed.value;
+  localStorage.setItem(currentPage.value, JSON.stringify(columnList.value));
   ElMessage.success('设置成功!');
   emits('update:drawer', false);
 };
 
 // 重置
 const reset = () => {
-  ElMessageBox.confirm('确定恢复默认操作设置?', '提示', {
+  ElMessageBox.confirm('确定恢复表格默认设置?', '提示', {
     confirmButtonText: '确定',
     cancelButtonText: '取消',
     type: 'warning',
   })
     .then(() => {
-      btnList.value = props.operateList;
-      btnList.value.forEach((v: any) => {
+      columnList.value = props.headerList;
+      columnList.value.forEach((v) => {
         v.checked = true;
       });
-      getBtnList();
+      getColumnList();
     })
     .catch(() => {});
 };
 
 watch(
   () => props.drawer,
-  (value) => {
-    if (value) {
-      getBtnList();
+  (val) => {
+    if (val) {
+      getColumnList();
     }
   },
 );
@@ -160,14 +153,14 @@ watch(
 <template>
   <el-drawer
     :model-value="drawer"
-    title="自定义按钮"
+    title="自定义表格"
     :show-close="false"
     :close-on-click-modal="false"
     :close-on-press-escape="false"
     size="600px"
     :with-header="false"
   >
-    <div class="drawer-title">自定义按钮</div>
+    <div class="drawer-title">自定义表格</div>
     <div class="drawer-alert">
       <div class="num">
         <el-icon><i-ep-info-filled /></el-icon>
@@ -175,44 +168,20 @@ watch(
           已选择 <span>{{ checkedNumber }}</span> 项
         </p>
       </div>
-    </div>
-    <div class="text-[12px] px-2">除了主颜色外，您可使用以下颜色，点击复制后粘贴到颜色输入框内</div>
-    <div class="px-2 my-2">
-      <el-button
-        type="success"
-        size="small"
-        @click="copyValue('success')"
-      >
-        Success
-      </el-button>
-      <el-button
-        type="info"
-        size="small"
-        @click="copyValue('info')"
-      >
-        Info
-      </el-button>
-      <el-button
-        type="warning"
-        size="small"
-        @click="copyValue('warning')"
-      >
-        Warning
-      </el-button>
-      <el-button
-        type="danger"
-        size="small"
-        @click="copyValue('danger')"
-      >
-        Danger
-      </el-button>
+      <div class="first">
+        <el-checkbox
+          v-model="fixed"
+          size="large"
+        />
+        首列固定显示
+      </div>
     </div>
     <div id="column">
       <ul
         class="header"
         :style="titleStyle"
       >
-        <li class="checked w-[100px]">
+        <li class="checked">
           <el-checkbox
             :model-value="allChecked"
             size="large"
@@ -220,9 +189,9 @@ watch(
           />
           全选
         </li>
-        <li class="flex-1">按钮</li>
-        <li class="w-[130px]">颜色</li>
-        <li class="w-[120px]">拖动调整顺序</li>
+        <li>列名</li>
+        <li>列宽</li>
+        <li>拖动调整顺序</li>
       </ul>
       <transition-group
         class="group"
@@ -231,7 +200,7 @@ watch(
         :style="groupStyle"
       >
         <ul
-          v-for="item in btnList"
+          v-for="item in columnList"
           :key="item.id"
           :draggable="true"
           @dragstart="dragstart(item)"
@@ -239,21 +208,21 @@ watch(
           @dragend="dragend(item, $event)"
           @dragover="dragover($event)"
         >
-          <li class="w-[100px]">
+          <li>
             <el-checkbox
               v-model="item.checked"
               size="large"
             />
           </li>
-          <li class="flex-1">{{ item.label }}</li>
-          <li class="w-[130px]">
+          <li>{{ item.label }}</li>
+          <li>
             <el-input
-              v-model="item.type"
-              placeholder=""
+              v-model="item.width"
+              placeholder="设置宽度"
               clearable
-            />
+            ></el-input>
           </li>
-          <li class="w-[120px]">
+          <li>
             <el-button
               type="primary"
               size="small"
@@ -319,7 +288,21 @@ watch(
 
     li {
       border-right: 1px solid #f2f2f2;
+
+      &:first-child {
+        flex: 1;
+      }
+
+      &:nth-child(2) {
+        width: 200px;
+      }
+
+      &:nth-child(3) {
+        width: 120px;
+      }
+
       &:last-child {
+        width: 130px;
         border-right: none;
       }
     }
@@ -353,7 +336,7 @@ watch(
   }
 
   .group {
-    height: calc(100vh - 330px);
+    height: calc(100vh - 280px);
     overflow-y: auto;
 
     &::-webkit-scrollbar {
@@ -396,7 +379,7 @@ watch(
   align-items: center;
   justify-content: space-between;
   border-radius: 4px;
-  margin: 20px 0 10px;
+  margin: 20px 0;
 
   .el-icon {
     line-height: 44px;
