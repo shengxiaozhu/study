@@ -126,7 +126,7 @@
 </template>
 
 <script setup lang="ts">
-import type { TableInstance, TableColumnCtx, Sort, ColumnStyle } from 'element-plus';
+import type { TableInstance, TableColumnCtx, Sort } from 'element-plus';
 import { headerListItem, operateListItem, rowStyleItem } from './props';
 import tableHeader from './tableHeader.vue';
 import tableOperate from './tableOperate.vue';
@@ -138,7 +138,7 @@ interface anyObj {
 const props = withDefaults(
   defineProps<{
     page?: string; // 当前页唯一标识
-    tableData: anyObj[]; // 表格数据
+    tableData: Record<string, any>[]; // 表格数据
     headerList: headerListItem[]; // 表头数据
     customHeader?: boolean; // 是否自定义列
     selection?: boolean; // 是否显示多选框
@@ -147,7 +147,7 @@ const props = withDefaults(
     operateFixed?: boolean; // 操作项是否固定右侧展示
     operateWidth?: number | string; // 操作项宽度
     operateList?: operateListItem[]; // 操作项数据
-    headerCellStyle?: anyObj; // 表头样式
+    headerCellStyle?: Record<string, any>; // 表头样式
     rowStyleList?: rowStyleItem[]; // 特殊表格样式 && 多条样式，根据判断成功最后一条展示
     offsetBottom?: number; // 距离底部距离
   }>(),
@@ -204,7 +204,7 @@ const getTableHeight = async () => {
   height.value = `calc(100vh - ${top + props.offsetBottom}px)`;
 };
 
-const Formatter = (row: anyObj, colunm: TableColumnCtx<any>) => {
+const Formatter = (row: Record<string, any>, colunm: TableColumnCtx<any>) => {
   return row[colunm.property] || '--';
 };
 
@@ -214,7 +214,7 @@ const handleSelectionChange = (value: anyObj[]) => {
 };
 
 // 设置某一条件下整行样式
-const rowStyle = ({ row }: ColumnStyle) => {
+const rowStyle = ({ row }: {row: any; rowIndex: number}) => {
   const { rowStyleList } = props;
   let css = {};
   if (rowStyleList.length) {

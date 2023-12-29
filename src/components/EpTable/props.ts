@@ -1,10 +1,12 @@
+import { TableColumnCtx } from 'element-plus';
+
 // 表头
 interface headerListItem {
   label: string; // 表头名称
   prop: string; // 展示字段 && 唯一标识
   width?: number; // 字段宽度
   slot?: boolean; // 是否开启插槽
-  formatter?: Function; // 格式化内容 开启插槽后无效
+  formatter?: (row: Record<string, any>, column: TableColumnCtx<any>) => void; // 格式化内容 开启插槽后无效
   sortable?: boolean; // 是否开启排序
   tooltip?: boolean; // 是否开启超出tooltip
   [key: string]: any; // 表头额外参数
