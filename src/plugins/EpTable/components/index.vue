@@ -129,7 +129,7 @@
 
 <script setup lang="ts">
 import type { TableInstance, TableColumnCtx, Sort } from 'element-plus';
-import { HeaderListItem, OperateListItem, RowStyleItem } from './types';
+import type { HeaderListItem, OperateListItem, RowStyleItem } from './types';
 import tableHeader from './tableHeader.vue';
 import tableOperate from './tableOperate.vue';
 

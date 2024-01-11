@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { OperateListItem } from './types';
+import type { OperateListItem } from './types';
 const props = withDefaults(
   defineProps<{
     page?: string; // 当前页唯一标识

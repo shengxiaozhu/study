@@ -1,4 +1,4 @@
-import { HeaderListItem, OperateListItem } from './types';
+import type { HeaderListItem, OperateListItem } from './types';
 
 export const tableData: any = [
   {

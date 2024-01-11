@@ -33,4 +33,4 @@ interface RowStyleItem {
   [key: string]: any; // 额外参数
 }
 
-export { HeaderListItem, OperateListItem, RowStyleItem };
+export type { HeaderListItem, OperateListItem, RowStyleItem };
