@@ -4,21 +4,19 @@
 npm i e-study
 ```
 
-# 使用
-
-## 样式引入
+# 样式引入
 
 ```js
 import 'e-study/index.css';
 ```
 
-# 整体组件引入
+# 组件引用
+
+## 整体引用
 
 ```js
 import { EpTable } from 'e-study';
 ```
-
-## props
 
 ### 表头参数
 
