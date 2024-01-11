@@ -1,6 +1,8 @@
 # 安装
 
+```js
 npm i e-study
+```
 
 # 使用
 
@@ -97,7 +99,7 @@ operateList: object[]; // 按钮参数同上
 
 ## 抛出事件
 
-@closeDrawer=(value, event?:string)=>{}  value: 选中数据， event: 'save' 保存事件
+@closeDrawer=(value, event?:string)=>{} value: 选中数据， event: 'save' 保存事件
 
 ## 示例
 
@@ -122,7 +124,7 @@ headerList: object[]; // 表头参数同上
 
 ## 抛出事件
 
-@closeDrawer=(value, event?:string)=>{}  value: 选中数据， event: 'save' 保存事件
+@closeDrawer=(value, event?:string)=>{} value: 选中数据， event: 'save' 保存事件
 
 ## 示例
 
