@@ -1,4 +1,4 @@
-import { HeaderListItem, OperateListItem } from './props';
+import { HeaderListItem, OperateListItem } from './types';
 
 export const tableData: any = [
   {

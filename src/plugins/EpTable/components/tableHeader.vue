@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { HeaderListItem } from './props';
+import { HeaderListItem } from './types';
 const props = withDefaults(
   defineProps<{
     page?: string; // 当前页唯一标识
