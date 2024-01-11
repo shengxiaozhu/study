@@ -20,7 +20,7 @@ import { EpTable } from 'e-study';
 
 ## props
 
-## 表头参数
+### 表头参数
 
 key? 代表非必传
 
@@ -39,7 +39,7 @@ const headerList = [
 ]
 ```
 
-## 按钮参数
+### 按钮参数
 
 ```js
 const operateList = [
@@ -57,13 +57,13 @@ const operateList = [
 ]
 ```
 
-## 表格数据
+### 表格数据
 
 ```js
 const tableData = [];
 ```
 
-## 其他参数
+### 其他参数
 
 ```js
 page: string; // 当前页面标识
@@ -78,7 +78,7 @@ rowStyleList?: RowStyleItem[]; // 特殊表格样式 && 多条样式，根据判
 offsetBottom?: number; // 表格距离底部距离
 ```
 
-## 表格抛出事件
+### 表格抛出事件
 
 ```js
 @selectionChange=(value)=>{} // 多选框选中事件 value: 表格选中数据
@@ -86,7 +86,7 @@ offsetBottom?: number; // 表格距离底部距离
 @sortChange=()=>{} // 排序事件
 ```
 
-## 示例
+### 示例
 
 ```vue
 <template>
@@ -111,20 +111,20 @@ offsetBottom?: number; // 表格距离底部距离
 import { EptOperate } from 'e-study';
 ```
 
-## props
+### props
 
 ```js
 drawer: boolean; // 是否显示抽屉
 operateList: object[]; // 按钮参数同上
 ```
 
-## 抛出事件
+### 抛出事件
 
 ```js
 @closeDrawer=(value, event?:string)=>{} value: 选中数据， event: 'save' 保存事件
 ```
 
-## 示例
+### 示例
 
 ```vue
 <template>
@@ -144,20 +144,20 @@ operateList: object[]; // 按钮参数同上
 import { EptHeader } from 'e-study';
 ```
 
-## props
+### props
 
 ```js
 drawer: boolean; // 是否显示抽屉
 headerList: object[]; // 表头参数同上
 ```
 
-## 抛出事件
+### 抛出事件
 
 ```js
 @closeDrawer=(value, event?:string)=>{} value: 选中数据， event: 'save' 保存事件
 ```
 
-## 示例
+### 示例
 
 ```vue
 <template>
