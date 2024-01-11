@@ -2679,18 +2679,6 @@ export const operateList: OperateListItem[] = [
     },
   },
   {
-    id: 4,
-    label: '返单到选品',
-    event: 'refuse',
-    decision: {
-      designer_type: {
-        condition: '0,3',
-        exist: true,
-      },
-    },
-    status: 604,
-  },
-  {
     id: 5,
     label: '排版',
     event: 'typesetting',

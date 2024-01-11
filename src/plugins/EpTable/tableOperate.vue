@@ -14,7 +14,7 @@ const props = withDefaults(
 );
 const emits = defineEmits<{
   (e: 'update:drawer', value: boolean): void;
-  (e: 'closeDrawer', value?: string): void;
+  (e: 'closeDrawer', value: OperateListItem[], event?: string): void;
 }>();
 
 const currentPage = computed(() => `EpTableOperateList${props.page}`);
@@ -119,6 +119,28 @@ const dragover = (e: any) => {
   e.preventDefault();
 };
 
+// 关闭抽屉 && 抛出展示按钮
+const exportOperate = (event?: string) => {
+  const operateList: OperateListItem[] = JSON.parse(JSON.stringify(props.operateList));
+  const storeList = JSON.parse(localStorage.getItem(currentPage.value) || '[]');
+  let list: OperateListItem[] = [];
+  if (storeList.length > 0) {
+    storeList.forEach((v: OperateListItem) => {
+      const item = operateList.find((h) => h.event === v.event);
+      if (item && v.checked) {
+        v.label = item.label;
+        // 每次更新按钮名称
+        list.push({ ...item, ...v, lable: item.label });
+      }
+    });
+  } else {
+    list = operateList.map((v) => ({ ...v, checked: true }));
+  }
+
+  emits('closeDrawer', list, event);
+  emits('update:drawer', false);
+};
+
 // 保存设置
 const submit = () => {
   const index = btnList.value.findIndex((item: any) => item.checked);
@@ -128,8 +150,7 @@ const submit = () => {
   btnList.value[index].first = first.value;
   localStorage.setItem(currentPage.value, JSON.stringify(btnList.value));
   ElMessage.success('设置成功!');
-  emits('update:drawer', false);
-  emits('closeDrawer', 'save');
+  exportOperate('save');
 };
 
 // 重置
@@ -149,14 +170,18 @@ const reset = () => {
     .catch(() => {});
 };
 
-watch(
-  () => props.drawer,
-  (value) => {
-    if (value) {
-      getBtnList();
-    }
-  },
-);
+// watch(
+//   () => props.drawer,
+//   (value) => {
+//     if (value) {
+//       getBtnList();
+//     }
+//   },
+// );
+onMounted(() => {
+  getBtnList();
+  exportOperate();
+});
 </script>
 
 <template>
@@ -168,7 +193,6 @@ watch(
     :close-on-press-escape="false"
     size="600px"
     :with-header="false"
-    @closed="$emit('closeDrawer')"
   >
     <div class="drawer-title">自定义按钮</div>
     <div class="drawer-alert">
@@ -279,7 +303,7 @@ watch(
       <div>
         <el-button
           size="default"
-          @click="$emit('update:drawer', false)"
+          @click="exportOperate()"
         >
           取消
         </el-button>

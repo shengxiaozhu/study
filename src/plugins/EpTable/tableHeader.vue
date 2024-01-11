@@ -15,7 +15,7 @@ const props = withDefaults(
 
 const emits = defineEmits<{
   (e: 'update:drawer', value: boolean): void;
-  (e: 'closeDrawer', value?: string): void;
+  (e: 'closeDrawer', value: HeaderListItem[], event?: string): void;
 }>();
 
 const currentPage = computed(() => `EpTableHeaderList${props.page}`);
@@ -57,6 +57,8 @@ const checkedNumber = computed(() => {
   });
   return num;
 });
+
+// 抽屉展示数据
 const getColumnList = () => {
   const column = JSON.parse(JSON.stringify(props.headerList));
   const storeList = JSON.parse(localStorage.getItem(currentPage.value) || '[]');
@@ -77,9 +79,29 @@ const getColumnList = () => {
     });
   }
 
+  // 首列是否固定
   fixed.value = columnList.value.some((v) => v.checked && v.fixed);
 };
-getColumnList();
+
+// 关闭抽屉 && 抛出展示数据
+const exportColumn = (event?: string) => {
+  let headerList: HeaderListItem[] = JSON.parse(JSON.stringify(props.headerList));
+  const storeList = JSON.parse(localStorage.getItem(currentPage.value) || '[]');
+  
+  let column: HeaderListItem[] = [];
+  if (storeList.length > 0) {
+    storeList.forEach((v: HeaderListItem) => {
+      const item = headerList.find((h) => h.prop === v.prop);
+      if (item && v.checked) {
+        column.push({ ...v, ...item, width: v.width || item.width });
+      }
+    });
+  } else {
+    column = headerList.map((v) => ({ ...v, checked: true }));
+  }
+  emits('closeDrawer', column, event);
+  emits('update:drawer', false);
+};
 
 const start = ref<HeaderListItem>();
 const end = ref<HeaderListItem>();
@@ -121,8 +143,7 @@ const submit = () => {
   columnList.value[index].fixed = fixed.value;
   localStorage.setItem(currentPage.value, JSON.stringify(columnList.value));
   ElMessage.success('设置成功!');
-  emits('update:drawer', false);
-  emits('closeDrawer', 'save');
+  exportColumn('save');
 };
 
 // 重置
@@ -142,14 +163,10 @@ const reset = () => {
     .catch(() => {});
 };
 
-watch(
-  () => props.drawer,
-  (val) => {
-    if (val) {
-      getColumnList();
-    }
-  },
-);
+onMounted(() => {
+  getColumnList();
+  exportColumn();
+});
 </script>
 
 <template>
@@ -161,7 +178,7 @@ watch(
     :close-on-press-escape="false"
     size="600px"
     :with-header="false"
-    @close="emits('update:drawer', false)"
+    destroy-on-close
   >
     <div class="drawer-title">自定义表格</div>
     <div class="drawer-alert">
@@ -248,7 +265,7 @@ watch(
       <div>
         <el-button
           size="default"
-          @click="$emit('update:drawer', false)"
+          @click="exportColumn()"
         >
           取消
         </el-button>

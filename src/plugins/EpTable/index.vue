@@ -116,12 +116,14 @@
     v-model:drawer="drawer"
     :headerList="headerList"
     :page="page"
+    @closeDrawer="getColumnList"
   />
 
   <tableOperate
     v-model:drawer="operateDrawer"
     :operateList="operateList"
     :page="page"
+    @closeDrawer="getOperateList"
   />
 </template>
 
@@ -177,26 +179,6 @@ const emits = defineEmits<{
   (e: 'tableOperate', btn: OperateListItem, row: anyObj): void;
 }>();
 
-const columnList = ref<HeaderListItem[]>();
-// 计算展示表头
-const getColumnList = () => {
-  const { headerList, page } = props;
-  const current = `EpTableHeaderList${page}`;
-  const storeList = JSON.parse(localStorage.getItem(current) || '[]');
-  let colunm: HeaderListItem[] = [];
-  if (storeList.length > 0) {
-    storeList.forEach((v: HeaderListItem) => {
-      const item = headerList.find((h) => h.prop === v.prop);
-      if (item && v.checked) {
-        colunm.push({ ...v, ...item, width: v.width || item.width });
-      }
-    });
-  } else {
-    colunm = headerList.map((v) => ({ ...v, checked: true }));
-  }
-  columnList.value = colunm;
-};
-
 const height = ref<string>();
 const tablePageRef = ref<TableInstance>();
 const getTableHeight = async () => {
@@ -231,26 +213,24 @@ const rowStyle = ({ row }: { row: any; rowIndex: number }) => {
   return css;
 };
 
+// 表头
+const drawer = ref(false);
+const setHeader = () => {
+  drawer.value = true;
+};
+const columnList = ref<HeaderListItem[]>();
+const getColumnList = (data: HeaderListItem[], event?: string) => {
+  columnList.value = data;
+};
+
+// 操作按钮
 const operateDrawer = ref(false);
+const setOperate = () => {
+  operateDrawer.value = true;
+};
 const btnList = ref<OperateListItem[]>([]);
-const getOperate = () => {
-  const { operateList, page } = props;
-  const current = `EpTableOperateList${page}`;
-  const storeList = JSON.parse(localStorage.getItem(current) || '[]');
-  let list: OperateListItem[] = [];
-  if (storeList.length > 0) {
-    storeList.forEach((v: OperateListItem) => {
-      const item = operateList.find((h) => h.event === v.event);
-      if (item && v.checked) {
-        v.label = item.label;
-        // 每次更新按钮名称
-        list.push({ ...item, ...v, lable: item.label });
-      }
-    });
-  } else {
-    list = operateList.map((v) => ({ ...v, checked: true }));
-  }
-  btnList.value = list;
+const getOperateList = (data: OperateListItem[], event?: string) => {
+  btnList.value = data;
 };
 
 // 判断按钮展示
@@ -276,14 +256,6 @@ const decisionBtn = (btn: OperateListItem, row: anyObj) => {
   return result;
 };
 
-const drawer = ref(false);
-const setHeader = () => {
-  drawer.value = true;
-};
-const setOperate = () => {
-  operateDrawer.value = true;
-};
-
 // 监听表格数据变化，修改表格高度
 watch(
   [() => props.tableData, () => tablePageRef.value],
@@ -291,18 +263,6 @@ watch(
     if (table) {
       tablePageRef.value?.doLayout();
       getTableHeight();
-    }
-  },
-  { immediate: true, deep: true },
-);
-
-// 监听表头和按钮设置操作
-watch(
-  [() => drawer.value, () => operateDrawer.value, () => tablePageRef.value],
-  ([drawer, operateDrawer, table]) => {
-    if (table) {
-      getOperate();
-      getColumnList();
     }
   },
   { immediate: true, deep: true },
