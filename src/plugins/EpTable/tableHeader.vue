@@ -15,6 +15,7 @@ const props = withDefaults(
 
 const emits = defineEmits<{
   (e: 'update:drawer', value: boolean): void;
+  (e: 'closeDrawer', value?: string): void;
 }>();
 
 const currentPage = computed(() => `EpTableHeaderList${props.page}`);
@@ -121,6 +122,7 @@ const submit = () => {
   localStorage.setItem(currentPage.value, JSON.stringify(columnList.value));
   ElMessage.success('设置成功!');
   emits('update:drawer', false);
+  emits('closeDrawer', 'save');
 };
 
 // 重置
@@ -159,6 +161,7 @@ watch(
     :close-on-press-escape="false"
     size="600px"
     :with-header="false"
+    @close="emits('update:drawer', false)"
   >
     <div class="drawer-title">自定义表格</div>
     <div class="drawer-alert">

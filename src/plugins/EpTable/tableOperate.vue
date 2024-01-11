@@ -14,6 +14,7 @@ const props = withDefaults(
 );
 const emits = defineEmits<{
   (e: 'update:drawer', value: boolean): void;
+  (e: 'closeDrawer', value?: string): void;
 }>();
 
 const currentPage = computed(() => `EpTableOperateList${props.page}`);
@@ -77,7 +78,7 @@ const getBtnList = () => {
     if (index > -1) {
       const item: OperateListItem = operate.splice(index, 1)[0];
       // 每次更新按钮名称
-      list.push({ ...item, ...v, label: item.label});
+      list.push({ ...item, ...v, label: item.label });
     }
   });
 
@@ -128,6 +129,7 @@ const submit = () => {
   localStorage.setItem(currentPage.value, JSON.stringify(btnList.value));
   ElMessage.success('设置成功!');
   emits('update:drawer', false);
+  emits('closeDrawer', 'save');
 };
 
 // 重置
@@ -166,6 +168,7 @@ watch(
     :close-on-press-escape="false"
     size="600px"
     :with-header="false"
+    @closed="$emit('closeDrawer')"
   >
     <div class="drawer-title">自定义按钮</div>
     <div class="drawer-alert">

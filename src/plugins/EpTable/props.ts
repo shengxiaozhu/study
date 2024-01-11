@@ -7,7 +7,7 @@ interface HeaderListItem {
   width?: number; // 字段宽度
   slot?: boolean; // 是否开启插槽
   formatter?: (row: Record<string, any>, column: TableColumnCtx<any>) => string; // 格式化内容 开启插槽后无效
-  sortable?: boolean; // 是否开启排序
+  sortable?: boolean | string; // 是否开启排序
   tooltip?: boolean; // 是否开启超出tooltip
   [key: string]: any; // 表头额外参数
 }

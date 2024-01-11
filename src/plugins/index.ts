@@ -1,7 +1,7 @@
 import type { App } from 'vue';
-import EpTable from './EpTable';
+import { EpTable, EptHeader, EptOperate } from './EpTable';
 
-const components = [EpTable];
+const components = [EpTable, EptHeader, EptOperate];
 
 // 定义 install 方法
 const install = (app: App): void => {
@@ -20,6 +20,6 @@ const Signin = {
   install,
 };
 
-export { EpTable };
+export { EpTable, EptHeader, EptOperate };
 
 export default Signin;

@@ -1,18 +1,137 @@
-# Vue 3 + TypeScript + Vite
+# 安装
 
-This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+npm i e-study
 
-## Recommended IDE Setup
+# 使用
 
-- [VS Code](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
+## 样式引入
 
-## Type Support For `.vue` Imports in TS
+import 'e-study/index.css'
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin) to make the TypeScript language service aware of `.vue` types.
+# 整体组件引入
 
-If the standalone TypeScript plugin doesn't feel fast enough to you, Volar has also implemented a [Take Over Mode](https://github.com/johnsoncodehk/volar/discussions/471#discussioncomment-1361669) that is more performant. You can enable it by the following steps:
+import { EpTable } from 'e-study'
 
-1. Disable the built-in TypeScript Extension
-   1. Run `Extensions: Show Built-in Extensions` from VSCode's command palette
-   2. Find `TypeScript and JavaScript Language Features`, right click and select `Disable (Workspace)`
-2. Reload the VSCode window by running `Developer: Reload Window` from the command palette.
+## props
+
+## 表头参数
+
+key? 代表非必传
+const headerList = [
+{
+label: string; // 表头名称
+prop: string; // 展示字段 && 唯一标识
+width?: number; // 字段宽度
+slot?: boolean; // 是否开启插槽
+formatter?: (row: Record<string, any>, column: TableColumnCtx<any>) => string; // 格式化内容 开启插槽后无效
+sortable?: boolean | string; // 是否开启排序
+tooltip?: boolean; // 是否开启超出tooltip
+[key: string]: any; // 其他额外参数
+}
+]
+
+## 按钮参数
+
+const operateList = [
+{
+label: string; // 按钮名称
+event: string; // 唯一标识
+decision: { // 按钮判断条件，可传多个
+'key':{ // key代表当前判断条件的字段
+condition: any[] | string; // 按钮判断条件
+exist: boolean; // 条件 取正 或 取反
+}
+};
+[key: string]: any; // 其他额外参数
+}
+]
+
+## 表格数据
+
+const tableData = []
+
+## 其他参数
+
+page: string; // 当前页面标识
+customHeader?: boolean; // 是否自定义列
+selection?: boolean; // 是否显示多选框
+scrollTop?: boolean; // 刷新数据是否回滚到顶部
+customOperate?: boolean; // 是否自定义操作项
+operateFixed?: boolean; // 操作项是否固定右侧展示
+operateWidth?: number | string; // 操作项宽度
+headerCellStyle?: Record<string, any>; // 表头样式
+rowStyleList?: RowStyleItem[]; // 特殊表格样式 && 多条样式，根据判断成功最后一条展示
+offsetBottom?: number; // 表格距离底部距离
+
+## 表格抛出事件
+
+@selectionChange=(value)=>{} // 多选框选中事件 value: 表格选中数据
+@tableOperate=(btn, row)=>{} // 操作项点击事件 btn: 当前按钮传入数据，row: 当前行传入数据
+@sortChange=()=>{} // 排序事件
+
+## 示例
+
+<template>
+   <EpTable
+      page="Eptable"
+      :headerList="headerList"
+      :tableData="tableData"
+      :operateList="operateList"
+      @selectionChange="selectionChange"
+      @tableOperate="tableOperate"
+      @sortChange="sortChange"
+   >
+   </EpTable>
+</template>
+
+# 单独使用
+
+## 自定义按钮抽屉
+
+import { EptOperate } from 'e-study'
+
+## props
+
+drawer: boolean; // 是否显示抽屉
+operateList: object[]; // 按钮参数同上
+
+## 抛出事件
+
+@closeDrawer=(event?:string)=>{} event = 'save' 保存事件
+
+## 示例
+
+<template>
+   <EptOperate
+      page="Eptable"
+      :drawer="drawer"
+      :operateList="operateList"
+      @closeDrawer="closeDrawer"
+   >
+   </EptOperate>
+</template>
+
+## 自定义表头抽屉
+
+import { EptHeader } from 'e-study'
+
+## props
+
+drawer: boolean; // 是否显示抽屉
+headerList: object[]; // 表头参数同上
+
+## 抛出事件
+
+@closeDrawer=(event?:string)=>{} event = 'save' 保存事件
+
+## 示例
+
+<template>
+   <EptHeader
+      page="Eptable"
+      :drawer="drawer"
+      :headerList="headerList"
+      @closeDrawer="closeDrawer"
+   >
+   </EptHeader>
+</template>
