@@ -126,7 +126,7 @@ const dragover = (e: any) => {
 const exportOperate = (event?: string) => {
   const operateList: OperateListItem[] = JSON.parse(JSON.stringify(props.operateList));
   const custom = localStorage.getItem(currentCustom.value);
-  const storeList = JSON.parse(custom || '[]')
+  const storeList = JSON.parse(custom || '[]');
   let list: OperateListItem[] = [];
   if (storeList.length > 0) {
     storeList.forEach((v: OperateListItem) => {
@@ -171,16 +171,16 @@ const reset = () => {
 };
 const isApiLoading = computed(() => apiStore().isApiLoading);
 watch(isApiLoading, (value) => {
-  console.log(value, 'ooooo');
+  if (!value) {
+    getBtnList();
+    exportOperate();
+  }
 });
 
-
 onMounted(async () => {
-  // if (!localStorage.getItem(currentCustom.value)) {
-  //   await ApiMethod.getCustom(currentPage.value);
-  // }
-  getBtnList();
-  exportOperate();
+  if (!localStorage.getItem(currentCustom.value) && !isApiLoading.value) {
+    await ApiMethod.getCustom(currentPage.value);
+  }
 });
 </script>
 

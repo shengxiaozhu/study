@@ -170,15 +170,16 @@ const reset = () => {
 const isApiLoading = computed(() => apiStore().isApiLoading);
 
 watch(isApiLoading, (value) => {
-  console.log(value, 'hhhhh');
+  if (!value) {
+    getColumnList();
+    exportColumn();
+  }
 });
 
 onMounted(async () => {
-  if (!localStorage.getItem(currentCustom.value)) {
+  if (!localStorage.getItem(currentCustom.value) && !isApiLoading.value) {
     await ApiMethod.getCustom(currentPage.value);
   }
-  getColumnList();
-  exportColumn();
 });
 </script>
 
