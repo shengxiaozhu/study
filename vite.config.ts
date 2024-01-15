@@ -88,7 +88,14 @@ export default defineConfig(({ command }) => {
       // 允许跨域
       cors: true,
       // 自定义代理规则
-      proxy: {},
+      proxy: {
+        '/workFlowFront': {
+          target: 'http://192.168.1.115:8082/workflow/',
+          ws: true,
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/workFlowFront/, ''),
+        },
+      },
     },
   };
 });

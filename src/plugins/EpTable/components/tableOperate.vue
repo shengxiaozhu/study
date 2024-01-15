@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import type { OperateListItem } from './types';
+import ApiMethod from '../models/ApiMethod';
+import apiStore from '@/store/modules/useApiStore';
 const props = withDefaults(
   defineProps<{
     page?: string; // 当前页唯一标识
@@ -17,7 +19,8 @@ const emits = defineEmits<{
   (e: 'closeDrawer', value: OperateListItem[], event?: string): void;
 }>();
 
-const currentPage = computed(() => `EpTableOperateList${props.page}`);
+const currentPage = computed(() => `EpTableCustom${props.page}`); // 当前页唯一标识
+const currentCustom = computed(() => `${currentPage.value}operateList`); // 当前设置唯一标识
 
 const copyValue = (text: string) => {
   const textarea = document.createElement('textarea');
@@ -71,7 +74,7 @@ const checkedNumber = computed(() => {
 
 const getBtnList = () => {
   const operate = JSON.parse(JSON.stringify(props.operateList));
-  const storeList = JSON.parse(localStorage.getItem(currentPage.value) || '[]');
+  const storeList = JSON.parse(localStorage.getItem(currentCustom.value) || '[]');
   const list: OperateListItem[] = [];
   storeList.forEach((v: OperateListItem) => {
     const index: number = operate.findIndex((h: OperateListItem) => h.event === v.event);
@@ -122,7 +125,8 @@ const dragover = (e: any) => {
 // 关闭抽屉 && 抛出展示按钮
 const exportOperate = (event?: string) => {
   const operateList: OperateListItem[] = JSON.parse(JSON.stringify(props.operateList));
-  const storeList = JSON.parse(localStorage.getItem(currentPage.value) || '[]');
+  const custom = localStorage.getItem(currentCustom.value);
+  const storeList = JSON.parse(custom || '[]')
   let list: OperateListItem[] = [];
   if (storeList.length > 0) {
     storeList.forEach((v: OperateListItem) => {
@@ -142,15 +146,11 @@ const exportOperate = (event?: string) => {
 };
 
 // 保存设置
-const submit = () => {
-  const index = btnList.value.findIndex((item: any) => item.checked);
-  btnList.value.forEach((e: any) => {
-    delete e.first;
-  });
-  btnList.value[index].first = first.value;
-  localStorage.setItem(currentPage.value, JSON.stringify(btnList.value));
-  ElMessage.success('设置成功!');
-  exportOperate('save');
+const submit = async () => {
+  const res: any = await ApiMethod.addCustom(currentPage.value, 'operateList', JSON.stringify(btnList.value));
+  if (res.code === 0) {
+    exportOperate('save');
+  }
 };
 
 // 重置
@@ -169,16 +169,16 @@ const reset = () => {
     })
     .catch(() => {});
 };
+const isApiLoading = computed(() => apiStore().isApiLoading);
+watch(isApiLoading, (value) => {
+  console.log(value, 'ooooo');
+});
 
-// watch(
-//   () => props.drawer,
-//   (value) => {
-//     if (value) {
-//       getBtnList();
-//     }
-//   },
-// );
-onMounted(() => {
+
+onMounted(async () => {
+  // if (!localStorage.getItem(currentCustom.value)) {
+  //   await ApiMethod.getCustom(currentPage.value);
+  // }
   getBtnList();
   exportOperate();
 });

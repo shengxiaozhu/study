@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import type { HeaderListItem } from './types';
+import ApiMethod from '../models/ApiMethod';
+import apiStore from '@/store/modules/useApiStore';
 const props = withDefaults(
   defineProps<{
     page?: string; // 当前页唯一标识
@@ -18,8 +20,8 @@ const emits = defineEmits<{
   (e: 'closeDrawer', value: HeaderListItem[], event?: string): void;
 }>();
 
-const currentPage = computed(() => `EpTableHeaderList${props.page}`);
-
+const currentPage = computed(() => `EpTableCustom${props.page}`); // 当前页唯一标识
+const currentCustom = computed(() => `${currentPage.value}headerList`); // 当前设置唯一标识
 const titleStyle = computed(() => {
   const h = props.headerList.length * 45;
   const H = document.documentElement.clientHeight || document.body.clientHeight;
@@ -61,7 +63,7 @@ const checkedNumber = computed(() => {
 // 抽屉展示数据
 const getColumnList = () => {
   const column = JSON.parse(JSON.stringify(props.headerList));
-  const storeList = JSON.parse(localStorage.getItem(currentPage.value) || '[]');
+  const storeList = JSON.parse(localStorage.getItem(currentCustom.value) || '[]');
   const list: HeaderListItem[] = [];
   storeList.forEach((v: HeaderListItem) => {
     const index: number = column.findIndex((h: HeaderListItem) => h.prop === v.prop);
@@ -83,11 +85,12 @@ const getColumnList = () => {
   fixed.value = columnList.value.some((v) => v.checked && v.fixed);
 };
 
-// 关闭抽屉 && 抛出展示数据
+// 抛出展示数据
 const exportColumn = (event?: string) => {
   let headerList: HeaderListItem[] = JSON.parse(JSON.stringify(props.headerList));
-  const storeList = JSON.parse(localStorage.getItem(currentPage.value) || '[]');
-  
+  const custom = localStorage.getItem(currentCustom.value);
+  const storeList = JSON.parse(custom || '[]');
+
   let column: HeaderListItem[] = [];
   if (storeList.length > 0) {
     storeList.forEach((v: HeaderListItem) => {
@@ -100,7 +103,6 @@ const exportColumn = (event?: string) => {
     column = headerList.map((v) => ({ ...v, checked: true }));
   }
   emits('closeDrawer', column, event);
-  emits('update:drawer', false);
 };
 
 const start = ref<HeaderListItem>();
@@ -135,15 +137,17 @@ const dragover = (e: DragEvent) => {
 };
 
 // 保存设置
-const submit = () => {
+const submit = async () => {
   const index = columnList.value.findIndex((item) => item.checked);
   columnList.value.forEach((e) => {
     delete e.fixed;
   });
   columnList.value[index].fixed = fixed.value;
-  localStorage.setItem(currentPage.value, JSON.stringify(columnList.value));
-  ElMessage.success('设置成功!');
-  exportColumn('save');
+  const res: any = await ApiMethod.addCustom(currentPage.value, 'headerList', JSON.stringify(columnList.value));
+  if (res.code === 0) {
+    exportColumn('save');
+    emits('update:drawer', false);
+  }
 };
 
 // 重置
@@ -163,7 +167,16 @@ const reset = () => {
     .catch(() => {});
 };
 
-onMounted(() => {
+const isApiLoading = computed(() => apiStore().isApiLoading);
+
+watch(isApiLoading, (value) => {
+  console.log(value, 'hhhhh');
+});
+
+onMounted(async () => {
+  if (!localStorage.getItem(currentCustom.value)) {
+    await ApiMethod.getCustom(currentPage.value);
+  }
   getColumnList();
   exportColumn();
 });
@@ -265,7 +278,7 @@ onMounted(() => {
       <div>
         <el-button
           size="default"
-          @click="exportColumn()"
+          @click="$emit('update:drawer', false)"
         >
           取消
         </el-button>
