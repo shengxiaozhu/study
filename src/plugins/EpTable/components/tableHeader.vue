@@ -179,7 +179,10 @@ watch(isApiLoading, (value) => {
 onMounted(async () => {
   if (!localStorage.getItem(currentCustom.value) && !isApiLoading.value) {
     await ApiMethod.getCustom(currentPage.value);
+    return
   }
+  getColumnList();
+  exportColumn();
 });
 </script>
 

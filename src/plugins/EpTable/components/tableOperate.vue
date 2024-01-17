@@ -93,6 +93,11 @@ const getBtnList = () => {
   }
 };
 
+// 设置按钮颜色
+const setBtnType = (item: OperateListItem, type: string) => {
+  item.type = type;
+};
+
 const start = ref(null);
 const end = ref(null);
 // 拖拽开始
@@ -180,7 +185,10 @@ watch(isApiLoading, (value) => {
 onMounted(async () => {
   if (!localStorage.getItem(currentCustom.value) && !isApiLoading.value) {
     await ApiMethod.getCustom(currentPage.value);
+    return;
   }
+  getBtnList();
+  exportOperate();
 });
 </script>
 
@@ -191,7 +199,7 @@ onMounted(async () => {
     :show-close="false"
     :close-on-click-modal="false"
     :close-on-press-escape="false"
-    size="600px"
+    size="500px"
     :with-header="false"
   >
     <div class="drawer-title">自定义按钮</div>
@@ -200,39 +208,9 @@ onMounted(async () => {
         <el-icon><i-ep-info-filled /></el-icon>
         <p>
           已选择 <span>{{ checkedNumber }}</span> 项
+          <b class="ml-2 text-[#E6A23C]">点击按钮可修改当前按钮颜色！</b>
         </p>
       </div>
-    </div>
-    <div class="text-[12px] px-2">除了主颜色外，您可使用以下颜色，点击复制后粘贴到颜色输入框内</div>
-    <div class="px-2 my-2">
-      <el-button
-        type="success"
-        size="small"
-        @click="copyValue('success')"
-      >
-        Success
-      </el-button>
-      <el-button
-        type="info"
-        size="small"
-        @click="copyValue('info')"
-      >
-        Info
-      </el-button>
-      <el-button
-        type="warning"
-        size="small"
-        @click="copyValue('warning')"
-      >
-        Warning
-      </el-button>
-      <el-button
-        type="danger"
-        size="small"
-        @click="copyValue('danger')"
-      >
-        Danger
-      </el-button>
     </div>
     <div id="column">
       <ul
@@ -248,7 +226,6 @@ onMounted(async () => {
           全选
         </li>
         <li class="flex-1">按钮</li>
-        <li class="w-[130px]">颜色</li>
         <li class="w-[120px]">拖动调整顺序</li>
       </ul>
       <transition-group
@@ -272,13 +249,60 @@ onMounted(async () => {
               size="large"
             />
           </li>
-          <li class="flex-1">{{ item.label }}</li>
-          <li class="w-[130px]">
-            <el-input
-              v-model="item.type"
-              placeholder=""
-              clearable
-            />
+          <li class="flex-1">
+            <el-popover
+              placement="bottom"
+              :width="330"
+              trigger="click"
+            >
+              <template #reference>
+                <el-button
+                  :type="item.type || 'primary'"
+                  link
+                  size="small"
+                >
+                  {{ item.label }}
+                </el-button>
+              </template>
+              <div class="p-1">
+                <div class="text-[14px] mb-3">点击下列色块可修改按钮颜色</div>
+                <el-button
+                  type="primary"
+                  size="small"
+                  @click="setBtnType(item, 'primary')"
+                >
+                  蓝色
+                </el-button>
+                <el-button
+                  type="success"
+                  size="small"
+                  @click="setBtnType(item, 'success')"
+                >
+                  绿色
+                </el-button>
+                <el-button
+                  type="info"
+                  size="small"
+                  @click="setBtnType(item, 'info')"
+                >
+                  灰色
+                </el-button>
+                <el-button
+                  type="warning"
+                  size="small"
+                  @click="setBtnType(item, 'warning')"
+                >
+                  橙色
+                </el-button>
+                <el-button
+                  type="danger"
+                  size="small"
+                  @click="setBtnType(item, 'danger')"
+                >
+                  红色
+                </el-button>
+              </div>
+            </el-popover>
           </li>
           <li class="w-[120px]">
             <el-button
@@ -380,7 +404,7 @@ onMounted(async () => {
   }
 
   .group {
-    height: calc(100vh - 330px);
+    height: calc(100vh - 270px);
     overflow-y: auto;
 
     &::-webkit-scrollbar {
