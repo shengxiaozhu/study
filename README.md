@@ -37,6 +37,65 @@ const headerList = [
 ]
 ```
 
+### 表格插槽
+
+```html
+<!-- 表头插槽 -->
+<template #header>
+  <slot
+    name="header"
+    :prop="col.prop"
+  >
+    {{ col.label }}
+  </slot>
+</template>
+<!-- 内容插槽 -->
+<template #default="{ row }">
+  <slot
+    name="default"
+    :prop="col.prop"
+    :row="row"
+  >
+    {{ row[col.prop] || '--' }}
+  </slot>
+</template>
+```
+
+### 表格抛出事件
+
+```js
+@selectionChange=(value)=>{} // 多选框选中事件 value: 表格选中数据
+@tableOperate=(btn, row)=>{} // 操作项点击事件 btn: 当前按钮传入数据，row: 当前行传入数据
+@sortChange=()=>{} // 排序事件
+```
+
+### 示例
+
+```vue
+<template>
+  <EpTable
+    page="Eptable"
+    :headerList="headerList"
+    :tableData="tableData"
+    :operateList="operateList"
+    @selectionChange="selectionChange"
+    @tableOperate="tableOperate"
+    @sortChange="sortChange"
+  >
+    <template #header="{ prop }">
+      <div v-if="prop === 'name'">
+        {{ col.label }}
+      </div>
+    </template>
+    <template #default="{ prop, row }">
+      <div v-if="prop === 'name'">
+        {{ row[prop] || '--' }}
+      </div>
+    </template>
+  </EpTable>
+</template>
+```
+
 ### 按钮参数
 
 ```js
@@ -74,31 +133,6 @@ operateWidth?: number | string; // 操作项宽度
 headerCellStyle?: Record<string, any>; // 表头样式
 rowStyleList?: RowStyleItem[]; // 特殊表格样式 && 多条样式，根据判断成功最后一条展示
 offsetBottom?: number; // 表格距离底部距离
-```
-
-### 表格抛出事件
-
-```js
-@selectionChange=(value)=>{} // 多选框选中事件 value: 表格选中数据
-@tableOperate=(btn, row)=>{} // 操作项点击事件 btn: 当前按钮传入数据，row: 当前行传入数据
-@sortChange=()=>{} // 排序事件
-```
-
-### 示例
-
-```vue
-<template>
-  <EpTable
-    page="Eptable"
-    :headerList="headerList"
-    :tableData="tableData"
-    :operateList="operateList"
-    @selectionChange="selectionChange"
-    @tableOperate="tableOperate"
-    @sortChange="sortChange"
-  >
-  </EpTable>
-</template>
 ```
 
 # 单独使用
