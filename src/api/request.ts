@@ -121,8 +121,8 @@ instance.interceptors.response.use(
  */
 export function post(url: string, data: any = {}, config: any = {}) {
   if (data.env === 'development') {
-    baseURL = 'http://192.168.1.115:8082/workflow/';
-    LOGIN_URL = 'http://sso.giikin.com:946/admin/login/index.html?_system=18'
+    LOGIN_URL = 'http://sso.giikin.com:946/admin/login/index.html?_system=18';
+    config.baseURL = 'http://192.168.1.115:8082/workflow/'
   }
   if (data.env) {
     delete data.env;

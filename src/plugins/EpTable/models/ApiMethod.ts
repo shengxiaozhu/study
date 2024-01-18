@@ -4,7 +4,7 @@ import apiStore, { useApiStore } from '@/store/modules/useApiStore';
 
 export default class ApiMethod {
   static async getCustom(key_word: string, env?: string) {
-    let res: any = null;
+  let res: any = null;
     if (!useApiStore.isApiLoading) {
       useApiStore.setApiStore(true);
       showLoadingApi();

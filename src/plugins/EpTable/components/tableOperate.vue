@@ -154,7 +154,12 @@ const exportOperate = (event?: string) => {
 
 // 保存设置
 const submit = async () => {
-  const res: any = await ApiMethod.addCustom(currentPage.value, 'operateList', JSON.stringify(btnList.value), props.env);
+  const res: any = await ApiMethod.addCustom(
+    currentPage.value,
+    'operateList',
+    JSON.stringify(btnList.value),
+    props.env,
+  );
   if (res.code === 0) {
     exportOperate('save');
   }

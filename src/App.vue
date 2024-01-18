@@ -4,7 +4,7 @@ import { tableData, headerList, operateList } from '@/plugins/EpTable/components
 </script>
 
 <template>
-  <EpTable :tableData="tableData" :headerList="headerList" :operateList="operateList" env="development" />
+  <EpTable page="aaaa" :tableData="tableData" :headerList="headerList" :operateList="operateList" env="development" />
 </template>
 
 <style scoped></style>

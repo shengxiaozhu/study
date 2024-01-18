@@ -145,7 +145,12 @@ const submit = async () => {
     delete e.fixed;
   });
   columnList.value[index].fixed = fixed.value;
-  const res: any = await ApiMethod.addCustom(currentPage.value, 'headerList', JSON.stringify(columnList.value), props.env);
+  const res: any = await ApiMethod.addCustom(
+    currentPage.value,
+    'headerList',
+    JSON.stringify(columnList.value),
+    props.env,
+  );
   if (res.code === 0) {
     exportColumn('save');
     emits('update:drawer', false);
