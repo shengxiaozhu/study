@@ -123,8 +123,6 @@ export function post(url: string, data: any = {}, config: any = {}) {
   if(data.env && data.env === 'development'){
     config.baseURL = 'http://192.168.1.115:8082/workflow/'
   }
-  console.log(config);
-  
   return instance({
     method: 'post',
     url,
