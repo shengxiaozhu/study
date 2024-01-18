@@ -7,8 +7,8 @@ import { getUserToken } from '@/utils/login';
 const { search } = window.location;
 const wfid = search.indexOf('wfid=5') !== -1 ? '5,6' : '1,2,3,4,7,8,9,10,11'; // 判断自动投放
 
-const LOGIN_URL = import.meta.env.VITE_APP_BASE_LOGIN;
-const baseURL = import.meta.env.VITE_APP_BASE_API;
+let LOGIN_URL = import.meta.env.VITE_APP_BASE_LOGIN;
+let baseURL = import.meta.env.VITE_APP_BASE_API;
 // let userToken =
 // 创建请求实例
 const instance = axios.create({
@@ -120,8 +120,12 @@ instance.interceptors.response.use(
  * @param {object} data
  */
 export function post(url: string, data: any = {}, config: any = {}) {
-  if(data.env === 'development'){
-    config.baseURL = 'http://192.168.1.115:8082/workflow/'
+  if (data.env === 'development') {
+    baseURL = 'http://192.168.1.115:8082/workflow/';
+    LOGIN_URL = 'http://sso.giikin.com:946/admin/login/index.html?_system=18'
+  }
+  if (data.env) {
+    delete data.env;
   }
   return instance({
     method: 'post',
