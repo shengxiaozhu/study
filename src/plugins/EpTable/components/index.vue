@@ -173,7 +173,7 @@ const props = withDefaults(
     },
     rowStyleList: () => [],
     offsetBottom: 40,
-    env: 'development',
+    env: '',
   },
 );
 

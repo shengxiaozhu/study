@@ -120,7 +120,7 @@ instance.interceptors.response.use(
  * @param {object} data
  */
 export function post(url: string, data: any = {}, config: any = {}) {
-  if(data.env && data.env === 'development'){
+  if(data.env === 'development'){
     config.baseURL = 'http://192.168.1.115:8082/workflow/'
   }
   return instance({

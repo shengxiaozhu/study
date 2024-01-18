@@ -133,6 +133,7 @@ operateWidth?: number | string; // 操作项宽度
 headerCellStyle?: Record<string, any>; // 表头样式
 rowStyleList?: RowStyleItem[]; // 特殊表格样式 && 多条样式，根据判断成功最后一条展示
 offsetBottom?: number; // 表格距离底部距离
+env?: string; // 环境变量 development 测试环境 production 生产环境
 ```
 
 # 单独使用
