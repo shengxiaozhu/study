@@ -116,6 +116,7 @@
     v-model:drawer="drawer"
     :headerList="headerList"
     :page="page"
+    :env="env"
     @closeDrawer="getColumnList"
   />
 
@@ -123,6 +124,7 @@
     v-model:drawer="operateDrawer"
     :operateList="operateList"
     :page="page"
+    :env="env"
     @closeDrawer="getOperateList"
   />
 </template>
@@ -152,6 +154,7 @@ const props = withDefaults(
     headerCellStyle?: Record<string, any>; // 表头样式
     rowStyleList?: RowStyleItem[]; // 特殊表格样式 && 多条样式，根据判断成功最后一条展示
     offsetBottom?: number; // 距离底部距离
+    env?: string; // 环境变量 development 测试环境 production 生产环境
   }>(),
   {
     page: 'page',
@@ -170,6 +173,7 @@ const props = withDefaults(
     },
     rowStyleList: () => [],
     offsetBottom: 40,
+    env: '',
   },
 );
 

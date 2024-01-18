@@ -1,17 +1,19 @@
 <script setup lang="ts">
 import type { HeaderListItem } from './types';
 import ApiMethod from '../models/ApiMethod';
-import apiStore from '@/store/modules/useApiStore';
+import apiStore, { useApiStore } from '@/store/modules/useApiStore';
 const props = withDefaults(
   defineProps<{
     page?: string; // 当前页唯一标识
     headerList: HeaderListItem[]; // 表头数据
     drawer: boolean; // 抽屉是否打开
+    env?: string; // 环境变量 development 测试环境 production 生产环境
   }>(),
   {
     page: 'page',
     headerList: () => [],
     drawer: false,
+    env: '',
   },
 );
 
@@ -143,7 +145,7 @@ const submit = async () => {
     delete e.fixed;
   });
   columnList.value[index].fixed = fixed.value;
-  const res: any = await ApiMethod.addCustom(currentPage.value, 'headerList', JSON.stringify(columnList.value));
+  const res: any = await ApiMethod.addCustom(currentPage.value, 'headerList', JSON.stringify(columnList.value), props.env);
   if (res.code === 0) {
     exportColumn('save');
     emits('update:drawer', false);
@@ -167,7 +169,7 @@ const reset = () => {
     .catch(() => {});
 };
 
-const isApiLoading = computed(() => apiStore().isApiLoading);
+const isApiLoading = computed(() => useApiStore.isApiLoading);
 
 watch(isApiLoading, (value) => {
   if (!value) {
@@ -178,8 +180,8 @@ watch(isApiLoading, (value) => {
 
 onMounted(async () => {
   if (!localStorage.getItem(currentCustom.value) && !isApiLoading.value) {
-    await ApiMethod.getCustom(currentPage.value);
-    return
+    await ApiMethod.getCustom(currentPage.value, props.env);
+    return;
   }
   getColumnList();
   exportColumn();

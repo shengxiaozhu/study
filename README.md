@@ -7,7 +7,7 @@ npm i e-study
 # 样式引入
 
 ```js
-import 'e-study/index.css';
+import 'e-study/style.css';
 ```
 
 # 组件引用

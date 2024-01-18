@@ -1,17 +1,19 @@
 <script setup lang="ts">
 import type { OperateListItem } from './types';
 import ApiMethod from '../models/ApiMethod';
-import apiStore from '@/store/modules/useApiStore';
+import apiStore, { useApiStore } from '@/store/modules/useApiStore';
 const props = withDefaults(
   defineProps<{
     page?: string; // 当前页唯一标识
     operateList: OperateListItem[]; // 操作项数据
     drawer: boolean; // 抽屉是否打开
+    env?: string; // 环境变量 development 测试环境 production 生产环境
   }>(),
   {
     page: 'page',
     operateList: () => [],
     drawer: false,
+    env: '',
   },
 );
 const emits = defineEmits<{
@@ -152,7 +154,7 @@ const exportOperate = (event?: string) => {
 
 // 保存设置
 const submit = async () => {
-  const res: any = await ApiMethod.addCustom(currentPage.value, 'operateList', JSON.stringify(btnList.value));
+  const res: any = await ApiMethod.addCustom(currentPage.value, 'operateList', JSON.stringify(btnList.value), props.env);
   if (res.code === 0) {
     exportOperate('save');
   }
@@ -174,7 +176,7 @@ const reset = () => {
     })
     .catch(() => {});
 };
-const isApiLoading = computed(() => apiStore().isApiLoading);
+const isApiLoading = computed(() => useApiStore.isApiLoading);
 watch(isApiLoading, (value) => {
   if (!value) {
     getBtnList();
@@ -184,7 +186,7 @@ watch(isApiLoading, (value) => {
 
 onMounted(async () => {
   if (!localStorage.getItem(currentCustom.value) && !isApiLoading.value) {
-    await ApiMethod.getCustom(currentPage.value);
+    await ApiMethod.getCustom(currentPage.value, props.env);
     return;
   }
   getBtnList();

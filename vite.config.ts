@@ -1,39 +1,39 @@
-import path from "path";
-import { defineConfig } from "vite";
-import vue from "@vitejs/plugin-vue";
-import Icons from "unplugin-icons/vite";
-import IconsResolver from "unplugin-icons/resolver";
-import AutoImport from "unplugin-auto-import/vite";
-import Components from "unplugin-vue-components/vite";
-import { ElementPlusResolver } from "unplugin-vue-components/resolvers";
-import { createSvgIconsPlugin } from "vite-plugin-svg-icons";
-const pathSrc = path.resolve(__dirname, "src");
+import path from 'path';
+import { defineConfig } from 'vite';
+import vue from '@vitejs/plugin-vue';
+import Icons from 'unplugin-icons/vite';
+import IconsResolver from 'unplugin-icons/resolver';
+import AutoImport from 'unplugin-auto-import/vite';
+import Components from 'unplugin-vue-components/vite';
+import { ElementPlusResolver } from 'unplugin-vue-components/resolvers';
+import { createSvgIconsPlugin } from 'vite-plugin-svg-icons';
+const pathSrc = path.resolve(__dirname, 'src');
 
 // https://vitejs.dev/config/
 export default defineConfig(({ command }) => {
-  const isBuild = command === "build";
+  const isBuild = command === 'build';
   return {
-    build:{
-      lib:{
-        entry: path.resolve(__dirname, "src/plugins/index.ts"),
-        name: "EStudy",
+    build: {
+      lib: {
+        entry: path.resolve(__dirname, 'src/plugins/index.ts'),
+        name: 'EStudy',
         fileName: (format) => `e-study.${format}.js`,
       },
-      rollupOptions:{
+      rollupOptions: {
         // 确保外部化处理那些你不想打包进库的依赖
-        external: ["vue", 'element-plus'],
-        output:{
+        external: ['vue', 'element-plus', 'pinia'],
+        output: {
           // 在 UMD 构建模式下为这些外部化的依赖提供一个全局变量
-          globals:{
-            vue: "Vue",
-            "element-plus": "ElementPlus",
-          }
-        }
-      }
+          globals: {
+            vue: 'Vue',
+            'element-plus': 'ElementPlus',
+          },
+        },
+      },
     },
     resolve: {
       alias: {
-        "@": pathSrc,
+        '@': pathSrc,
       },
     },
     plugins: [
@@ -41,7 +41,7 @@ export default defineConfig(({ command }) => {
       AutoImport({
         // Auto import functions from Vue, e.g. ref, reactive, toRef...
         // 自动导入 Vue 相关函数，如：ref, reactive, toRef 等
-        imports: ["vue"],
+        imports: ['vue'],
 
         // Auto import functions from Element Plus, e.g. ElMessage, ElMessageBox... (with style)
         // 自动导入 Element Plus 相关函数，如：ElMessage, ElMessageBox... (带样式)
@@ -51,30 +51,30 @@ export default defineConfig(({ command }) => {
           // Auto import icon components
           // 自动导入图标组件
           IconsResolver({
-            prefix: "Icon",
+            prefix: 'Icon',
           }),
         ],
-        dts: path.resolve(pathSrc, "auto-imports.d.ts"),
+        dts: path.resolve(pathSrc, 'auto-imports.d.ts'),
       }),
       Components({
         resolvers: [
           // Auto register icon components
           // 自动注册图标组件
           IconsResolver({
-            enabledCollections: ["ep"],
+            enabledCollections: ['ep'],
           }),
           // Auto register Element Plus components
           // 自动导入 Element Plus 组件
           ElementPlusResolver(),
         ],
-        dts: path.resolve(pathSrc, "components.d.ts"),
+        dts: path.resolve(pathSrc, 'components.d.ts'),
       }),
       Icons({
         autoInstall: true,
       }),
       createSvgIconsPlugin({
-        iconDirs: [path.resolve(process.cwd(), "src/assets/icons/svg")],
-        symbolId: "icon-[dir]-[name]",
+        iconDirs: [path.resolve(process.cwd(), 'src/assets/icons/svg')],
+        symbolId: 'icon-[dir]-[name]',
         svgoOptions: isBuild,
       }),
     ],
@@ -82,7 +82,7 @@ export default defineConfig(({ command }) => {
       // 端口号
       port: 3000,
       // 监听所有地址
-      host: "0.0.0.0",
+      host: '0.0.0.0',
       // 服务启动时是否自动打开浏览器
       open: true,
       // 允许跨域
