@@ -23,5 +23,6 @@
 // export { EpTable, EptHeader, EptOperate };
 
 // export default Signin;
+import '@/style.css'
 
 export * from './EpTable'
