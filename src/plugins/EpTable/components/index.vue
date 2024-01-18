@@ -75,6 +75,7 @@
         <template v-else>
           <div class="flex justify-center items-center">
             <el-button
+              v-if="customHeader"
               type="primary"
               link
               size="small"
@@ -83,6 +84,7 @@
               表头
             </el-button>
             <el-button
+              v-if="customOperate"
               type="primary"
               link
               size="small"
