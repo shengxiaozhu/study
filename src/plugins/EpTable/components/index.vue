@@ -6,13 +6,17 @@
     :height="height"
     :header-cell-style="headerCellStyle"
     :row-style="rowStyle"
-    @handleSelectionChange="handleSelectionChange"
+    :selection="selection"
+    @selectionChange="(value: anyObj[]) => emits('selectionChange', value)"
     @sortChange="(sort: Sort) => $emit('sortChange', sort)"
   >
-    <el-table-column
-      type="selection"
-      width="50"
-    />
+    <template v-if="selection">
+      <el-table-column
+        :key="999999"
+        type="selection"
+        width="50"
+      />
+    </template>
     <!-- 表格插槽 -->
     <template v-for="col in columnList">
       <el-table-column
@@ -163,7 +167,7 @@ const props = withDefaults(
     tableData: () => [],
     headerList: () => [],
     customHeader: true,
-    selection: true,
+    selection: false,
     scrollTop: true,
     customOperate: true,
     operateFixed: true,
@@ -194,11 +198,6 @@ const getTableHeight = async () => {
 
 const Formatter = (row: Record<string, any>, colunm: TableColumnCtx<any>) => {
   return row[colunm.property] || '--';
-};
-
-// 多选
-const handleSelectionChange = (value: anyObj[]) => {
-  emits('selectionChange', value);
 };
 
 // 设置某一条件下整行样式
