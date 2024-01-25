@@ -243,7 +243,7 @@ onMounted(async () => {
       >
         <ul
           v-for="item in btnList"
-          :key="item.id"
+          :key="item.event"
           :draggable="true"
           @dragstart="dragstart(item)"
           @dragenter="dragenter(item, $event)"

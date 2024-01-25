@@ -245,7 +245,7 @@ onMounted(async () => {
       >
         <ul
           v-for="item in columnList"
-          :key="item.id"
+          :key="item.prop"
           :draggable="true"
           @dragstart="dragstart(item)"
           @dragenter="dragenter(item, $event)"
